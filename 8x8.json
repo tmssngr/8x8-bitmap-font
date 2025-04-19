@@ -1,0 +1,61 @@
+{
+	"$baseURI": "https://yal.cc/r/20/pixelfont/",
+	"$version": "1.0",
+	"in-glyphs": [
+		" !\"#$%&'()*+,-./",
+		"0123456789:;<=>?",
+		"@ABCDEFGHIJKLMNO",
+		"PQRSTUVWXYZ[\\]^_",
+		"`abcdefghijklmno",
+		"pqrstuvwxyz{|}~∎"
+	],
+	"glyph-color": "auto",
+	"glyph-width": 8,
+	"glyph-height": 8,
+	"glyph-ofs-x": 0,
+	"glyph-ofs-y": 0,
+	"glyph-sep-x": 0,
+	"glyph-sep-y": 0,
+	"glyph-base-x": 0,
+	"glyph-baseline": 6,
+	"glyph-spacing": 0,
+	"font-is-mono": true,
+	"font-em-square": 960,
+	"font-line-gap": 0,
+	"font-ascend": 864,
+	"font-descend": -160,
+	"font-px-size": 96,
+	"contour-type": "pixel",
+	"font-type": "ttf",
+	"font-is-upper": false,
+	"font-name": "8x8",
+	"font-author": "tmssngr",
+	"font-copy": "(c)",
+	"font-version-major": 0,
+	"font-version-minor": 1,
+	"font-desc": "8x8 monospace retro pixel font",
+	"font-license": "",
+	"font-license-url": "",
+	"font-sample-text": [
+		""
+	],
+	"font-embedding": "4",
+	"font-weight-class": "400",
+	"font-width-class": "5",
+	"font-creation-date": "2025-04-19",
+	"font-creation-time": "15:10",
+	"font-modification-date": "2025-04-19",
+	"font-modification-time": "15:20",
+	"font-modification-auto": true,
+	"overrides": [
+		"# hide the pixels of the \"space\" characters!",
+		"# (but they'll still have a width)",
+		"hide \\s",
+		""
+	],
+	"font-preview-text": [
+		"THE QUICK BROWN FOX JUMPS OVER A LAZY DOG.",
+		"the quick brown fox jumps over a lazy dog.",
+		"0123456789"
+	]
+}
