@@ -2,7 +2,7 @@
 
 This font is meant for retro computers like the [JU+TE computer](https://github.com/boert/JU-TE-Computer) (east german 8-bit computer from the end of the 80s).
 
-The is defined in a plain bitmap:
+The font is defined in a plain bitmap:
 
 ![8x8 font](./bold.png)
 
