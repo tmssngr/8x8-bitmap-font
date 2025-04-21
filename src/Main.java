@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 final class Main {
 
 	public static void main(String[] args) throws IOException {
-		final BufferedImage image = ImageIO.read(new File("bold.png"));
+		final BufferedImage image = ImageIO.read(new File("8x8.png"));
 		final int width = image.getWidth();
 		final int height = image.getHeight();
 		assert width % 8 == 0;
