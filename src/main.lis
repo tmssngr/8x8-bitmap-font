@@ -1,0 +1,62 @@
+import "go:fmt"
+import "go:image/color"
+import "go:image/png"
+import "go:os"
+
+fn main() {
+	let input_file_name = "8x8.png"
+	let output_file_name = "bitmap.bin"
+	let input_file = match os.Open(input_file_name) {
+		Ok(f) => f,
+		Err(err) => {
+			fmt.Println(f"Can't read {input_file_name}")
+			return
+		}
+	}
+
+	defer input_file.Close()
+
+	let img = match png.Decode(input_file) {
+		Ok(i) => i,
+		Err(err) => {
+			fmt.Println(f"Failed to read image in file ${input_file_name}")
+			return
+		}
+	}
+
+	let bounds = img.Bounds()
+
+	let output_file = match os.Create(output_file_name) {
+		Ok(f) => f,
+		Err(err) => {
+			fmt.Println(f"Can't create {output_file_name}")
+			return
+		}
+	}
+
+	defer output_file.Close()
+
+	for row in 0..6 {
+		for column in 0..0x10 {
+			for row_pixel in 0..8 {
+				let mut value: uint8 = 0
+				for column_pixel in 0..8 {
+					let pixel = match img.At(column * 8 + column_pixel + bounds.Min.X,
+					                         row * 8 + row_pixel + bounds.Min.Y) {
+						Some(p) => p,
+						None => panic("no pixel")
+					}
+					let gray : uint8 = if to_gray(pixel) < 128 { 1 } else { 0 }
+					value = (value << 1) | gray
+				}
+				let buffer = [value]
+				output_file.Write(buffer)
+			}
+		}
+	}
+}
+
+fn to_gray(color: color.Color) -> uint8 {
+	let (r, g, b, _) = color.RGBA()
+	((r + g + b) / 3) as uint8
+}

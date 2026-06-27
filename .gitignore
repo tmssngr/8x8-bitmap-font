@@ -1,2 +1,2 @@
-/out/
-/*.bin
+/target/
+*.bin
