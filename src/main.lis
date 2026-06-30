@@ -58,5 +58,5 @@ fn main() {
 
 fn to_gray(color: color.Color) -> uint8 {
 	let (r, g, b, _) = color.RGBA()
-	((r + g + b) / 3) as uint8
+	((r/256 + g/256 + b/256) / 3) as uint8
 }
