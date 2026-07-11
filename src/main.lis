@@ -1,0 +1,130 @@
+import "go:fmt"
+import "go:image/color"
+import "go:image/png"
+import "go:os"
+import "go:path/filepath"
+import "go:strings"
+
+const ARG_ASCII = "--ascii"
+
+fn parse_command_line() -> Result<(string, string, bool), string> {
+	let mut is_hex_output = false
+	let mut file_names: Slice<string> = []
+	let args = os.Args
+	for i in 1..args.length() {
+		let arg = args[i]
+		if arg == ARG_ASCII {
+			is_hex_output = true
+			continue
+		}
+
+		file_names = file_names.append(arg)
+	}
+
+	if file_names.length() != 2 {
+		let file_name = filepath.Base(os.Args[0])
+		return Err(f"{file_name} [{ARG_ASCII}] <image-file> <output-file>
+{ARG_ASCII}: the output file will be generated as ASCII with 16 hexadecimal values per line")
+	}
+
+	Ok((file_names[0], file_names[1], is_hex_output))
+}
+
+fn main() {
+	let (input_file_name, output_file_name, is_hex_output) = match parse_command_line() {
+		Ok((ifile, ofile, hex)) => (ifile, ofile, hex),
+		Err(err) => {
+			fmt.Println(err)
+			return
+		}
+	}
+
+	let input_file = match os.Open(input_file_name) {
+		Ok(f) => f,
+		Err(err) => {
+			fmt.Println(f"Can't read {input_file_name}")
+			return
+		}
+	}
+
+	defer input_file.Close()
+
+	let img = match png.Decode(input_file) {
+		Ok(i) => i,
+		Err(err) => {
+			fmt.Println(f"Failed to read image in file ${input_file_name}")
+			return
+		}
+	}
+
+	let bounds = img.Bounds()
+
+	let output_file = match os.Create(output_file_name) {
+		Ok(f) => f,
+		Err(err) => {
+			fmt.Println(f"Can't create {output_file_name}")
+			return
+		}
+	}
+
+	defer output_file.Close()
+
+	let mut i = 0;
+	for row in 0..6 {
+		for column in 0..0x10 {
+			for row_pixel in 0..8 {
+				let mut value: uint8 = 0
+				for column_pixel in 0..8 {
+					let pixel = match img.At(column * 8 + column_pixel + bounds.Min.X,
+					                         row * 8 + row_pixel + bounds.Min.Y) {
+						Some(p) => p,
+						None => panic("no pixel")
+					}
+					let gray : uint8 = if to_gray(pixel) < 128 { 1 } else { 0 }
+					value = (value << 1) | gray
+				}
+
+				if let Err(err) = write_value(value, is_hex_output, output_file, i) {
+					return
+				}
+
+				if i == 15 {
+					i = 0
+				} else {
+					i += 1
+				}
+			}
+		}
+	}
+}
+
+fn write_value(value: uint8, is_hex_output: bool, output_file: Ref<os.File>, i: int) -> Result<(), error> {
+	let result = if is_hex_output {
+		let mut buffer = strings.Builder{}
+		if i > 0 {
+			buffer.WriteByte(' ')
+			if i == 8 {
+				buffer.WriteByte(' ')
+			}
+		}
+		buffer.WriteString(fmt.Sprintf("%02x", value))
+		if i == 15 {
+			buffer.WriteByte('\n')
+		}
+
+		output_file.WriteString(buffer.String())
+	} else {
+		let buffer = [value]
+		output_file.Write(buffer)
+	}
+
+	if let Partial.Err(err) = result {
+		return Err(err)
+	}
+	Ok(())
+}
+
+fn to_gray(color: color.Color) -> uint8 {
+	let (r, g, b, _) = color.RGBA()
+	((r/256 + g/256 + b/256) / 3) as uint8
+}
