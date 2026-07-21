@@ -6,7 +6,7 @@ The font is defined in a plain bitmap:
 
 ![8x8 font](./8x8.png)
 
-and can be converted to binary data with the Java application at [src/Main.java](src/Main.java).
+and can be converted to binary data with the [Lisette](https://github.com/ivov/lisette) application at [src/main.lis](src/main.lis).
 Each "dark" color will be treated as `1` and each "light" color as `0`.
 The light-blue lines (also converted to `0`) are just visual guides to mark pixels that should remain empty to prevent neighboring characters from touching.
 
