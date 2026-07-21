@@ -84,7 +84,7 @@ fn main() {
 					value = (value << 1) | gray
 				}
 
-				if let Err(err) = write_value(value, is_hex_output, output_file, i) {
+				if let Some(err) = write_value(value, is_hex_output, output_file, i) {
 					return
 				}
 
@@ -98,7 +98,7 @@ fn main() {
 	}
 }
 
-fn write_value(value: uint8, is_hex_output: bool, output_file: Ref<os.File>, i: int) -> Result<(), error> {
+fn write_value(value: uint8, is_hex_output: bool, output_file: Ref<os.File>, i: int) -> Option<error> {
 	let result = if is_hex_output {
 		let mut buffer = strings.Builder{}
 		if i > 0 {
@@ -119,9 +119,9 @@ fn write_value(value: uint8, is_hex_output: bool, output_file: Ref<os.File>, i: 
 	}
 
 	if let Partial.Err(err) = result {
-		return Err(err)
+		return Some(err)
 	}
-	Ok(())
+	None
 }
 
 fn to_gray(color: color.Color) -> uint8 {
