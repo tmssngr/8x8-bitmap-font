@@ -66,10 +66,14 @@ fn main() {
 			return
 		}
 	}
-
 	defer output_file.Close()
 
-	let mut i = 0;
+	let data_writer : DataWriter = if is_hex_output {
+		&AsciiDataWriter{..}
+	} else {
+		&BinaryDataWriter{}
+	}
+
 	for row in 0..6 {
 		for column in 0..0x10 {
 			for row_pixel in 0..8 {
@@ -84,44 +88,59 @@ fn main() {
 					value = (value << 1) | gray
 				}
 
-				if let Some(err) = write_value(value, is_hex_output, output_file, i) {
+				if let Some(err) = data_writer.write(value, output_file) {
 					return
-				}
-
-				if i == 15 {
-					i = 0
-				} else {
-					i += 1
 				}
 			}
 		}
 	}
 }
 
-fn write_value(value: uint8, is_hex_output: bool, output_file: Ref<os.File>, i: int) -> Option<error> {
-	let result = if is_hex_output {
+interface DataWriter {
+	fn write(value: uint8, output_file: Ref<os.File>) -> Option<error>
+}
+
+struct AsciiDataWriter {
+	i: int
+}
+
+impl AsciiDataWriter {
+	fn write(self: Ref<AsciiDataWriter>, value: uint8, output_file: Ref<os.File>) -> Option<error> {
 		let mut buffer = strings.Builder{}
-		if i > 0 {
+		if self.i > 0 {
 			buffer.WriteByte(' ')
-			if i == 8 {
+			if self.i == 8 {
 				buffer.WriteByte(' ')
 			}
 		}
 		buffer.WriteString(fmt.Sprintf("%02x", value))
-		if i == 15 {
+		if self.i == 15 {
 			buffer.WriteByte('\n')
 		}
+	
+		if self.i == 15 {
+			self.i = 0
+		} else {
+			self.i += 1
+		}
+		if let Partial.Err(err) = output_file.WriteString(buffer.String()) {
+			return Some(err)
+		}
+		None
+	}
+}
 
-		output_file.WriteString(buffer.String())
-	} else {
+struct BinaryDataWriter{
+}
+
+impl BinaryDataWriter {
+	fn write(self: Ref<BinaryDataWriter>, value: uint8, output_file: Ref<os.File>) -> Option<error> {
 		let buffer = [value]
-		output_file.Write(buffer)
+		if let Partial.Err(err) = output_file.Write(buffer) {
+			return Some(err)
+		}
+		None
 	}
-
-	if let Partial.Err(err) = result {
-		return Some(err)
-	}
-	None
 }
 
 fn to_gray(color: color.Color) -> uint8 {
