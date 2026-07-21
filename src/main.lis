@@ -101,7 +101,8 @@ interface DataWriter {
 }
 
 struct AsciiDataWriter {
-	i: int
+	i: int,
+	rows: int
 }
 
 impl AsciiDataWriter {
@@ -114,15 +115,18 @@ impl AsciiDataWriter {
 			}
 		}
 		buffer.WriteString(fmt.Sprintf("%02x", value))
-		if self.i == 15 {
+
+		self.i += 1
+		if self.i == 16 {
 			buffer.WriteByte('\n')
-		}
-	
-		if self.i == 15 {
 			self.i = 0
-		} else {
-			self.i += 1
+			self.rows += 1
+			if self.rows == 16 {
+				buffer.WriteByte('\n')
+				self.rows = 0;
+			}
 		}
+
 		if let Partial.Err(err) = output_file.WriteString(buffer.String()) {
 			return Some(err)
 		}
