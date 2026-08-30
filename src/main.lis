@@ -106,7 +106,7 @@ struct AsciiDataWriter {
 }
 
 impl AsciiDataWriter {
-	fn write(self: Ref<AsciiDataWriter>, value: uint8, output_file: Ref<os.File>) -> Option<error> {
+	fn write(self: mut Ref<AsciiDataWriter>, value: uint8, output_file: Ref<os.File>) -> Option<error> {
 		let mut buffer = strings.Builder{}
 		if self.i > 0 {
 			buffer.WriteByte(' ')
