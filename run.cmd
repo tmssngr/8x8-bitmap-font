@@ -17,3 +17,6 @@ set BIN=target\.lisette\bin\font-img-to-bin.exe
 
 %BIN%         8x8tL.png  8x8tL.bin
 %BIN% --ascii 8x8tL.png  8x8tL.mem
+
+%BIN%         4x8.png  4x8.bin
+%BIN% --ascii 4x8.png  4x8.mem
