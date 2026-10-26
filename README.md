@@ -12,6 +12,10 @@ The light-blue lines (also converted to `0`) are just visual guides to mark pixe
 
 The fonts take inspiration from several retro fonts.
 
+## Example
+
+![8x8L](./screenshots/8x8L.png)
+
 ## TTF
 
 Those who want to use it on a PC, may use the service at https://yal.cc/tools/pixel-font/ to convert it to a TTF font.
